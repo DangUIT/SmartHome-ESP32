@@ -1,0 +1,51 @@
+<!DOCTYPE HTML><html>
+<head>
+  <title>ESP-NOW DASHBOARD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="..\static\style.css">
+</head>
+<body>
+  <div class="topnav">
+    <h1>DASHBOARD</h1>
+  </div>
+  <div class="content">
+    <div class="cards">
+      <div class="card temperature">
+        <p class="card-title"><i class="fas fa-thermometer-half"></i> TEMPERATURE</p><p><span class="reading"><span id="t1"></span> &deg;C</span></p>
+      </div>
+      <div class="card humidity">
+        <p class="card-title"><i class="fas fa-tint"></i> HUMIDITY</p><p><span class="reading"><span id="h1"></span> &percnt;</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-6">
+        <div class="card">
+          <div class="card-body">
+            <canvas id="tempChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card">
+          <div class="card-body">
+            <canvas id="humiChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+  <script src="../static/grapth.js"></script>
+
+</body>
+</html>
