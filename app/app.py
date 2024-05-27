@@ -1,9 +1,8 @@
-from flask import Flask, render_template, Response, stream_with_context
+from flask import Flask, render_template, Response, stream_with_context, request, url_for, redirect
 from flask_mqtt import Mqtt
 import json
 import sqlite3
 import time
-
 
 app = Flask(__name__)
 app.config['MQTT_BROKER_URL'] = 'mqtt.flespi.io'
@@ -21,9 +20,21 @@ def get_db_connection():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('login.html')
 
-
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username == "admin" and password == "123":
+            return redirect(url_for("home"))
+    return render_template("login.html")
+    
+@app.route('/home')
+def home():
+    return render_template('home.html')
+ 
 @app.route('/grapth')
 def grapth():
     def get_database():
