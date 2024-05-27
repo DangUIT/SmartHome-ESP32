@@ -136,6 +136,7 @@ void app_main(void)
     // printf("Sensor data: humidity=%.1f, temp=%d\n", humidity, temperature);
     // printf("Humidity: %.1f%%\nTemp: %.1fC\n", humidity, temperature);
     sprintf(data,"Humidity: %.1f%%\nTemp: %.1fC\n", humidity, temperature);
+    task_ssd1306_display_data(humidity, temperature);    
     esp_mqtt_client_publish(client, "dht", data, strlen(data), 0, 0);
     vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
