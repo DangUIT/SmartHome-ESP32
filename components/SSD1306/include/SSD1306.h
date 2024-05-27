@@ -46,7 +46,7 @@
 #define OLED_CMD_SET_CHARGE_PUMP        0x8D    // follow with 0x14
 
 void ssd1306_init();
-void task_ssd1306_display_text(const void *arg_text);
+void task_ssd1306_display_data(int humidity, int temperature);
 void task_ssd1306_display_clear();
 
 #endif /* MAIN_SSD1366_H_ */
