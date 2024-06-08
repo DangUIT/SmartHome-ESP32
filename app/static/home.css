@@ -29,7 +29,7 @@ body {
   display: grid; 
   grid-gap: 2rem; 
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
-  height: 150px;
+  height: 190px;
 }
 .reading { 
   font-size: 2.8rem; 
@@ -164,3 +164,27 @@ input:checked + .slider:before {
   background-color: #11dc18;
   color: white;
 }
+
+.status-text {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 10px; /* Giảm khoảng cách ở đây */
+  margin-bottom: 10px; /* Thêm khoảng cách dưới nếu cần */
+}
+
+.status-text{
+  font-weight: bold;
+}
+
+.card.light .status-text
+{
+  color: #7b7b0a	; 
+}
+.card.fan .status-text
+{
+  color: #0b19e4; 
+}
+.card.door .status-text {
+  color: #e98707; 
+}
+

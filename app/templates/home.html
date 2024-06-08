@@ -15,10 +15,12 @@
   <div class="content">
     <div class="cards">
       <div class="card temperature">
-        <p class="card-title"><i class="fas fa-thermometer-half"></i> TEMPERATURE</p><p><span class="reading"><span id="t1"></span> &deg;C</span></p>
+        <p class="card-title"><i class="fas fa-thermometer-half"></i> TEMPERATURE</p>
+        <p><span class="reading"><span id="t1"></span> &deg;C</span></p>
       </div>
       <div class="card humidity">
-        <p class="card-title"><i class="fas fa-tint"></i> HUMIDITY</p><p><span class="reading"><span id="h1"></span> &percnt;</span></p>
+        <p class="card-title"><i class="fas fa-tint"></i> HUMIDITY</p>
+        <p><span class="reading"><span id="h1"></span> &percnt;</span></p>
       </div>
 
       <!-- Light -->
@@ -29,6 +31,9 @@
           <input type="checkbox" id="lightToggle" onclick="toggleLight()">
           <span class="slider round"></span>
         </label>
+        <p id="lightStatus" class="status-text">OFF</p>
+     
+        
       </div>
 
       <!-- Fan -->
@@ -39,6 +44,7 @@
           <input type="checkbox" id="fanToggle" onclick="toggleFan()">
           <span class="slider round"></span>
         </label>
+        <p id="fanStatus" class="status-text">OFF</p>
 
         <div class="fan-speeds" id="fanSpeeds">
           <input type="radio" id="speed1" name="fanSpeed" value="1" onclick="notifySpeed(this.value)">
@@ -47,6 +53,7 @@
           <label for="speed2">2</label>
           <input type="radio" id="speed3" name="fanSpeed" value="3" onclick="notifySpeed(this.value)">
           <label for="speed3">3</label>
+
         </div>
       </div>
 
@@ -59,6 +66,7 @@
           <input type="checkbox" id="doorToggle" onclick="toggleDoor()">
           <span class="slider round"></span>
         </label>
+        <p id="doorStatus" class="status-text">CLOSE</p>
 
       </div>
 

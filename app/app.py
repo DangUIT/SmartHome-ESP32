@@ -55,6 +55,25 @@ def grapth():
     response.headers["X-Accel-Buffering"] = "no"
     return response
 
+@app.route('/get-device-status', methods=['GET'])
+def get_device_status():
+    conn = get_db_connection()
+
+    light_status = conn.execute('SELECT LIGHT FROM LIGHT ORDER BY ID DESC LIMIT 1').fetchone()[0]
+    light_status = "ON" if light_status == "1" else "OFF"
+
+    fan_status = conn.execute('SELECT FAN FROM FAN ORDER BY ID DESC LIMIT 1').fetchone()[0]
+    if fan_status == "0": fan_status = "OFF"
+    elif fan_status == "1": fan_status = "MODE 1"
+    elif fan_status == "2": fan_status = "MODE 2"
+    elif fan_status == "3": fan_status = "MODE 3"
+
+    door_status = conn.execute('SELECT DOOR FROM DOOR ORDER BY ID DESC LIMIT 1').fetchone()[0]
+    door_status = "CLOSE" if door_status == "0" else "OPEN"
+
+    conn.close()
+    return jsonify(light=light_status, fan=fan_status, door=door_status)
+
 @app.route('/toggle-light', methods=['POST'])
 def toggle_light():
     data = request.get_json()
