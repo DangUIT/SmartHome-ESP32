@@ -105,14 +105,14 @@ $(document).ready(function () {
         const data = JSON.parse(event.data);
         document.getElementById('t1').innerText = data.temp_value.toFixed(1);
         document.getElementById('h1').innerText = data.humi_value.toFixed(1);
-        // if (temp.data.labels.length === 10) {
-        //     temp.data.labels.shift();
-        //     temp.data.datasets[0].data.shift();
-        // }
-        // if (humi.data.labels.length === 10) {
-        //     humi.data.labels.shift();
-        //     humi.data.datasets[0].data.shift();
-        // }
+        if (temp.data.labels.length === 15) {
+            temp.data.labels.shift();
+            temp.data.datasets[0].data.shift();
+        }
+        if (humi.data.labels.length === 15) {
+            humi.data.labels.shift();
+            humi.data.datasets[0].data.shift();
+        }
         temp.data.labels.push(data.temp_time);
         temp.data.datasets[0].data.push(data.temp_value);
         humi.data.labels.push(data.humi_time);

@@ -24,6 +24,11 @@
 #include "dht11.h"
 #include "SSD1306.h"
 
+#include "Servo.h"
+#include "Motor.h"
+
+
+
 #define _I2C_NUMBER(num) I2C_NUM_##num
 #define I2C_NUMBER(num) _I2C_NUMBER(num)
 
@@ -42,10 +47,16 @@
 #define WRITE_BIT I2C_MASTER_WRITE              /*!< I2C master write */
 #define READ_BIT I2C_MASTER_READ                /*!< I2C master read */
 
+#define DHT_PORT 32
+#define LIGHT 19
+
 static const char *TAG = "MQTT_EXAMPLE";
 
 float humidity,temperature;
 char data[32];
+char control[32];
+
+int light,fan,door;
 esp_mqtt_client_handle_t client;
 esp_mqtt_event_handle_t event;
 
@@ -55,8 +66,6 @@ static void log_error_if_nonzero(const char *message, int error_code)
         ESP_LOGE(TAG, "Last error %s: 0x%x", message, error_code);
     }
 }
-
-
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
@@ -68,7 +77,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
 
-        msg_id = esp_mqtt_client_subscribe(client, "dht", 0);
+        msg_id = esp_mqtt_client_subscribe(client, "control", 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
         break;
@@ -91,7 +100,33 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
         printf("DATA=%.*s\r\n", event->data_len, event->data);
+       
+        char control[32];
+        memset(control, '\0', sizeof(control));
+        strncpy(control, event->data,event->data_len);
+  
+        // printf("%c\n",control[strlen(control)-1]);
+        // printf("%d\n",strlen(control));
+        // printf("%s\n",control);
+        // printf("%d\n",event->data_len);
+        // printf("%c\n",control[strlen(control)-1]);
+            
+        if(control[0]=='L'){
+            light = control[strlen(control)-1] - '0';
+            printf("Light: %d\n",light);
+        }
+        else if(control[0]=='F'){
+            fan = control[strlen(control)-1] - '0';
+            printf("Fan: %d\n",fan);
+        }
+        else if(control[0]=='D'){
+            door = control[strlen(control)-1] - '0';
+            printf("Door: %d\n",door);
+        }
+
         break;
+
+
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
         if (event->error_handle->error_type == MQTT_ERROR_TYPE_TCP_TRANSPORT) {
@@ -142,6 +177,54 @@ static esp_err_t i2c_master_init(void)
     return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
 }
 
+void task_sensor()
+{
+    while(1){
+    task_ssd1306_display_clear();    
+    dht_read_float_data(DHT_TYPE_DHT11, DHT_PORT, &humidity, &temperature);
+    // printf("Humidity: %.1f%%\nTemp: %.1fC\n", humidity, temperature);
+    sprintf(data,"Humidity: %.1f%%\nTemp: %.1fC\n", humidity, temperature);
+    task_ssd1306_display_text(data);
+    esp_mqtt_client_publish(client, "dht", data, strlen(data), 0, 0);
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+}
+
+void task_control()
+{
+    int light_current, fan_current, door_current;
+    light_current = fan_current = door_current = 0;
+    light = fan = door = 0;
+    while(1){
+        if(light_current != light){
+            light_current = light;
+            gpio_set_level(LIGHT,light_current);
+            char temp[5]; 
+            sprintf(temp,"%d",light_current);
+            esp_mqtt_client_publish(client, "light", temp, strlen(temp), 0, 0);
+        }
+        if(fan_current != fan){
+            fan_current = fan;
+            if(fan == 0) motor(0);
+            else if(fan == 1)   motor(4000);
+            else if(fan == 2)   motor(6000);
+            else if(fan == 3)   motor(8000);
+            char temp[5]; 
+            sprintf(temp,"%d",fan_current);
+            esp_mqtt_client_publish(client, "fan", temp, strlen(temp), 0, 0);
+
+        }
+        if(door_current != door){
+            door_current = door;
+            servo(door_current);
+            char temp[5]; 
+            sprintf(temp,"%d",door_current);
+            esp_mqtt_client_publish(client, "door", temp, strlen(temp), 0, 0);
+        }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
 void app_main(void)
 {
     ESP_LOGI(TAG, "[APP] Startup..");
@@ -159,24 +242,15 @@ void app_main(void)
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-
-    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
-     * Read "Establishing Wi-Fi or Ethernet Connection" section in
-     * examples/protocols/README.md for more information about this function.
-     */
     ESP_ERROR_CHECK(example_connect());
-
     mqtt_app_start();
     ESP_ERROR_CHECK(i2c_master_init());                         
     ssd1306_init(); 
-    while(1){
-    task_ssd1306_display_clear();    
-    dht_read_float_data(DHT_TYPE_DHT11, 17, &humidity, &temperature);
-    // printf("Sensor data: humidity=%.1f, temp=%d\n", humidity, temperature);
-    // printf("Humidity: %.1f%%\nTemp: %.1fC\n", humidity, temperature);
-    sprintf(data,"Humidity: %.1f%%\nTemp: %.1fC\n", humidity, temperature);
-    task_ssd1306_display_text(data);
-    esp_mqtt_client_publish(client, "dht", data, strlen(data), 0, 0);
-    vTaskDelay(10000 / portTICK_PERIOD_MS);
-    }
+    gpio_set_direction(LIGHT,GPIO_MODE_OUTPUT);
+
+ 
+    xTaskCreate(task_sensor,"task_sensor",4096,NULL,1,NULL);
+    xTaskCreate(task_control,"task_control",4096,NULL,1,NULL);
+
+
 }

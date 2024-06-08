@@ -2,11 +2,11 @@
 <head>
   <title>ESP-NOW DASHBOARD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet"> -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="..\static\home.css">
+  <link rel="stylesheet" href="../static/home.css">
+
 </head>
 <body>
   <div class="topnav">
@@ -20,9 +20,50 @@
       <div class="card humidity">
         <p class="card-title"><i class="fas fa-tint"></i> HUMIDITY</p><p><span class="reading"><span id="h1"></span> &percnt;</span></p>
       </div>
-    </div>
-  </div>
 
+      <!-- Light -->
+      <div class="card light">
+        <p class="card-title"><i class="fas fa-lightbulb"></i> LIGHT</p>
+
+        <label class="switch">
+          <input type="checkbox" id="lightToggle" onclick="toggleLight()">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Fan -->
+      <div class="card fan">
+        <p class="card-title"><i class="fas fa-fan"></i> FAN</p>
+        
+        <label class="switch">
+          <input type="checkbox" id="fanToggle" onclick="toggleFan()">
+          <span class="slider round"></span>
+        </label>
+
+        <div class="fan-speeds" id="fanSpeeds">
+          <input type="radio" id="speed1" name="fanSpeed" value="1" onclick="notifySpeed(this.value)">
+          <label for="speed1">1</label>
+          <input type="radio" id="speed2" name="fanSpeed" value="2" onclick="notifySpeed(this.value)">
+          <label for="speed2">2</label>
+          <input type="radio" id="speed3" name="fanSpeed" value="3" onclick="notifySpeed(this.value)">
+          <label for="speed3">3</label>
+        </div>
+      </div>
+
+
+      <!-- Door -->
+      <div class="card door">
+        <p class="card-title"><i class="fas fa-door-open"></i> DOOR</p>
+        
+        <label class="switch">
+          <input type="checkbox" id="doorToggle" onclick="toggleDoor()">
+          <span class="slider round"></span>
+        </label>
+
+      </div>
+
+  </div>
+ 
   <div class="container">
     <div class="row">
       <div class="col-6">
@@ -42,10 +83,14 @@
     </div>
   </div>
 
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
   <script src="../static/grapth.js"></script>
+  <script src="../static/direct.js"></script>
+  
 
 </body>
 </html>
+
