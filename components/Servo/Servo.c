@@ -11,7 +11,7 @@
 #define SERVO_MAX_PULSEWIDTH_US (2000) // Maximum pulse width in microsecond
 #define SERVO_MAX_DEGREE        (90)   // Maximum angle in degree upto which servo can rotate
 
-#define SERVO_PULSE_GPIO        (18)   // GPIO connects to the PWM signal line
+#define SERVO_PULSE_GPIO        (13)   // GPIO connects to the PWM signal line
 
 static inline uint32_t example_convert_servo_angle_to_duty_us(int angle)
 {
